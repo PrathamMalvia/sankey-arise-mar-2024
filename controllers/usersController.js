@@ -57,7 +57,7 @@ const userController = {
     // Profile
     profile: asyncHandler(async (req, res) => {
         // Find the user
-        const user = await userModel.findById("663a8d055f490a24a76e4994").select("-password");
+        const user = await userModel.findById(req.user).select("-password");
         res.json({ user });
     })
 }

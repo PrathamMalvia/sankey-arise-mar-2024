@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 const users = require("./routes/usersRoute.js");
+const errorHandler = require("./middlewares/ErrorHandler.js");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,6 +17,9 @@ app.get("/", (req, res) => {
 // Middlewares
 app.use(express.json());
 app.use(cors());
+
+// Error Handler
+app.use(errorHandler)
 
 // Routes
 app.use("/", users);
