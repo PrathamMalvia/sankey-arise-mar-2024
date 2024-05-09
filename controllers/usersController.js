@@ -56,9 +56,68 @@ const userController = {
 
     // Profile
     profile: asyncHandler(async (req, res) => {
-        // Find the user
-        const user = await userModel.findById(req.user).select("-password");
-        res.json({ user });
+        try {
+            // Find the user
+            const user = await userModel.findById(req.user).select("-password");
+            if (!user) {
+                throw new Error("User not found");
+            }
+            res.json({ user });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }),
+
+    // Get user by ID
+    getUser: asyncHandler(async (req, res) => {
+        try {
+            const userId = req.params.userId;
+            const user = await userModel.findById(userId).select("-password");
+            if (!user) {
+                throw new Error("User not found");
+            }
+            res.json({ user });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }),
+
+    // Get all users
+    getAllUsers: asyncHandler(async (req, res) => {
+        try {
+            const users = await userModel.find().select("-password");
+            res.json({ users });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }),
+
+    // Update user
+    updateUser: asyncHandler(async (req, res) => {
+        try {
+            const userId = req.params.userId;
+            const updatedUser = await userModel.findByIdAndUpdate(userId, req.body, { new: true }).select("-password");
+            if (!updatedUser) {
+                throw new Error("User not found");
+            }
+            res.json({ updatedUser });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }),
+
+    // Delete user
+    deleteUser: asyncHandler(async (req, res) => {
+        try {
+            const userId = req.params.userId;
+            const deletedUser = await userModel.findByIdAndDelete(userId).select("-password");
+            if (!deletedUser) {
+                throw new Error("User not found");
+            }
+            res.json({ message: "User deleted successfully" });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
     })
 }
 
