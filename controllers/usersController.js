@@ -1,12 +1,12 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const asyncHandler = require('express-async-handler')
+const expressAsyncHandler = require("express-async-handler");
 
-const userModel = require("../models/userModel");
+const User = require("../models/userModel");
 
 const userController = {
     // Register
-    register: asyncHandler(async (req, res) => {
+    register: expressAsyncHandler(async (req, res) => {
         const { username, email, password } = req.body;
 
         // Validations
@@ -15,7 +15,7 @@ const userController = {
         }
 
         // Check if user exists
-        const userExists = await userModel.findOne({ email });
+        const userExists = await User.findOne({ email });
         if (userExists) {
             throw new Error("User already exists");
         }
@@ -25,18 +25,18 @@ const userController = {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         // Create the user 
-        const userCreated = await userModel.create({ username, email, password: hashedPassword });
+        const userCreated = await User.create({ username, email, password: hashedPassword });
 
         // Send the response
         res.json({ username: userCreated.username, email: userCreated.email, id: userCreated.id });
     }),
 
     // Login
-    login: asyncHandler(async (req, res) => {
+    login: expressAsyncHandler(async (req, res) => {
         const { email, password } = req.body;
 
         // Check if user exists
-        const user = await userModel.findOne({ email });
+        const user = await User.findOne({ email });
         if (!user) {
             throw new Error("Invalid credentials");
         }
@@ -55,10 +55,10 @@ const userController = {
     }),
 
     // Profile
-    profile: asyncHandler(async (req, res) => {
+    profile: expressAsyncHandler(async (req, res) => {
         try {
             // Find the user
-            const user = await userModel.findById(req.user).select("-password");
+            const user = await User.findById(req.user).select("-password");
             if (!user) {
                 throw new Error("User not found");
             }
@@ -69,10 +69,10 @@ const userController = {
     }),
 
     // Get user by ID
-    getUser: asyncHandler(async (req, res) => {
+    getUser: expressAsyncHandler(async (req, res) => {
         try {
             const userId = req.params.userId;
-            const user = await userModel.findById(userId).select("-password");
+            const user = await User.findById(userId).select("-password");
             if (!user) {
                 throw new Error("User not found");
             }
@@ -83,9 +83,9 @@ const userController = {
     }),
 
     // Get all users
-    getAllUsers: asyncHandler(async (req, res) => {
+    getAllUsers: expressAsyncHandler(async (req, res) => {
         try {
-            const users = await userModel.find().select("-password");
+            const users = await User.find().select("-password");
             res.json({ users });
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -93,10 +93,10 @@ const userController = {
     }),
 
     // Update user
-    updateUser: asyncHandler(async (req, res) => {
+    updateUser: expressAsyncHandler(async (req, res) => {
         try {
             const userId = req.params.userId;
-            const updatedUser = await userModel.findByIdAndUpdate(userId, req.body, { new: true }).select("-password");
+            const updatedUser = await User.findByIdAndUpdate(userId, req.body, { new: true }).select("-password");
             if (!updatedUser) {
                 throw new Error("User not found");
             }
@@ -107,10 +107,10 @@ const userController = {
     }),
 
     // Delete user
-    deleteUser: asyncHandler(async (req, res) => {
+    deleteUser: expressAsyncHandler(async (req, res) => {
         try {
             const userId = req.params.userId;
-            const deletedUser = await userModel.findByIdAndDelete(userId).select("-password");
+            const deletedUser = await User.findByIdAndDelete(userId).select("-password");
             if (!deletedUser) {
                 throw new Error("User not found");
             }
