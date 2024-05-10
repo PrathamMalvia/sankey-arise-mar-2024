@@ -7,6 +7,7 @@ const errorHandler = require("./middlewares/ErrorHandler.js");
 
 const users = require("./routes/usersRoute.js");
 const hotels = require("./routes/hotelsRoute.js");
+const rooms = require("./routes/roomsRoute.js");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -25,6 +26,7 @@ app.use(errorHandler)
 // Routes
 app.use("/", users);
 app.use("/", hotels);
+app.use("/", rooms);
 
 mongoose.connect(process.env.MONGODB_URL)
     .then(() => {

@@ -75,7 +75,7 @@ const hotelController = {
                 return res.status(404).json({ message: "No rooms found for this hotel" });
             }
 
-            res.status(200).json({ roomList });
+            res.status(200).json(roomList);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
